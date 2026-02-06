@@ -8,6 +8,7 @@
 
 // [] - weorc
 // "" - scripture
+// , - mearc
 // ; - her geendeth weorc, and niwe weorc onginth (ne thearf)
 
 /// WEORC
@@ -16,6 +17,8 @@
    bisen: apert[5]; -> 5              */
 /* raedan[]; - raedan (tacen .abb)
    bisen: raedan["anging.abb"];       */
+/* healdan[]; - healdan (cyn, nama, sceatt)
+   bisen: healdan[rim, x, 250];       */
 
 /// CYN
 
