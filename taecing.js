@@ -21,6 +21,8 @@
    bisen: raedan["anging.abb"];              */
 /* healdan[]; - healdan (cyn, nama, sceatt)
    bisen: healdan[rim, x, 250];              */
+/* inlidan[]; - inlidan (cyn, nama)
+   bisen: ilidan[rim, x]                     */
 
 /// CYN
 
