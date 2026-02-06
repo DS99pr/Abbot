@@ -10,7 +10,7 @@ function awritan(gewrit) {
 
 function wyrceanForraeden(gylt) {
     console.log(`
-/\\/\\ FORRAEDEN \\/\\/
+\\/\\/\\ FORRAEDEN \\/\\/
 ${gylt};        
 `);
 }
@@ -146,6 +146,7 @@ function claensian(run) {
         const display = "apert"
         const file = "raedan"
         const set = "healdan"
+        const input = "inlidan"
 
         if (deed() && deed().cyn === "WEORC" && deed().sceatt == display) {
             it++;
@@ -304,13 +305,61 @@ function claensian(run) {
             wyrd.push(ast)
             continue;
         }
+
+        if (deed() && deed().cyn === "WEORC" && deed().sceatt == input) {
+            it++;
+
+            if (!deed() || deed().cyn !== "L.TRENDEL") {
+                wyrceanForraeden(`Aefter ${input} sceal beon '['`);
+                break;
+            }
+            it++;
+
+            if (!deed() || deed().cyn !== "WEORC" || 
+                (deed().sceatt !== "rim" && deed().sceatt !== "scripture")) { 
+                    wyrceanForraeden(`On niman sceal beon cyn (rim/scripture)`); 
+                    break; 
+            }
+
+            const hiw = deed().sceatt;
+            it++;
+
+            if (!deed() || deed().cyn !== "COMMA") {
+                wyrceanForraeden("Hit sceal beon todala");
+                break;
+            }
+            it++
+
+            if (!deed() || deed().cyn !== "WEORC") {
+                wyrceanForraeden('Thu scealt giefan naman hordes');
+                break;
+            };
+            
+            const nama = deed().sceatt;
+            it++;
+
+            if (!deed() || deed().cyn !== "R.TRENDEL") {
+                wyrceanForraeden(`Aefter tham gewrit sceal beon ']'`);
+                break;
+            }
+            it++;
+
+            const ast = {
+                cyn: `${formaMiccle(input)}.W`,
+                hiw: hiw,
+                nama: nama
+            };
+            wyrd.push(ast)
+            continue;
+        }
+
         wyrceanForraeden("Claensian: Unbekend weorc '" + (deed()?.sceatt || "?") + "'");
         break;
     }
     return wyrd;
 }
 
-function ongietan(wyrd) {
+async function ongietan(wyrd) {
     for (let i = 0; i < wyrd.length; i++) {
 
         const ast = wyrd[i];
@@ -371,6 +420,29 @@ function ongietan(wyrd) {
             };
             continue;
         }
+
+        if (ast.cyn == "Inlidan.W") {
+            const hiw = ast.hiw;
+            const nama = ast.nama;
+
+            await new Promise(resolve => {
+                rl.question(">>> ", (agen) => {
+                    if (hiw === "rim") {
+                        const num = Number(agen)
+                        if (Number.isNaN(num)) { 
+                            wyrceanForraeden(`Ne maeg niman rim of '${agen}'`); 
+                        } else { 
+                            UrimHord[nama] = num; 
+                        }
+                    } else {
+                        UscriptureHord[nama] = agen;
+                    }
+                    resolve();
+                });
+            });
+            continue;
+        }
+
     
         if (ast.cyn == "Var.R") {
             if (ast.hiw == "rim") {
@@ -384,11 +456,11 @@ function ongietan(wyrd) {
     }
 }
 
-function doon() {
-    rl.question(">> ", (agen) => {
+async function doon() {
+    rl.question(">> ", async (agen) => {
         let run = awendan(agen)
         let asts = claensian(run)
-        ongietan(asts)
+        await ongietan(asts)
         doon();
     })
 }
