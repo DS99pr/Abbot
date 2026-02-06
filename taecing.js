@@ -14,11 +14,13 @@
 /// WEORC
 
 /* apert[]; - apert (scripture odde rim)
-   bisen: apert[5]; -> 5              */
+   bisen: apert[5]; -> 5              
+   tillang: apert[rim[x]] / apert[scripture[x]] 
+                                             */
 /* raedan[]; - raedan (tacen .abb)
-   bisen: raedan["anging.abb"];       */
+   bisen: raedan["anging.abb"];              */
 /* healdan[]; - healdan (cyn, nama, sceatt)
-   bisen: healdan[rim, x, 250];       */
+   bisen: healdan[rim, x, 250];              */
 
 /// CYN
 
