@@ -5,10 +5,10 @@ function awritan(gewrit) {
     console.log(gewrit);
 }
 
-function wyrceanForraeden(error) {
+function wyrceanForraeden(gylt) {
     console.log(`
 /\\/\\ FORRAEDEN \\/\\/
-${error};        
+${gylt};        
 `);
 }
 
