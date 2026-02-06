@@ -1,6 +1,17 @@
 const readline = require('readline');
 const fs = require('fs')
 
+function awritan(gewrit) {
+    console.log(gewrit);
+}
+
+function wyrceanForraeden(error) {
+    console.log(`
+/\\/\\ FORRAEDEN \\/\\/
+${error};        
+`);
+}
+
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -9,7 +20,7 @@ const rl = readline.createInterface({
 function toslitanForme(tacen) {
     const endeSticcu = tacen.lastIndexOf(".");
     if (endeSticcu === -1) {
-        throw new Error("Tacen sceal maero haebban (.abb)");
+        wyrceanForraeden("Tacen sceal maero haebban (.abb)");
     }
     const nama = tacen.slice(0, endeSticcu);
     const maero = tacen.slice(endeSticcu + 1);
@@ -19,12 +30,16 @@ function toslitanForme(tacen) {
 
 function raedanForme(nama, maero) {
     if (maero !== "abb") {
-        throw new Error("Tacen sceal habban thaet betste maero (.abb)")
+        wyrceanForraeden("Tacen sceal habban thaet betste maero (.abb)")
     }
-    const text = fs.readFileSync(`${nama}.${maero}`, "utf8");
-    const run = awendan(text);
+    const gewrit = fs.readFileSync(`${nama}.${maero}`, "utf8");
+    return gewrit;
+}
+
+function sceawungMicel(gewrit) {
+    const run = awendan(gewrit);
     const wyrd = claensian(run);
-    return wyrd;
+    return wyrd
 }
 
 
@@ -105,7 +120,7 @@ function awendan(aerende) {
 }
 
 function claensian(run) {
-    const capitalize = scr => scr.charAt(0).toUpperCase() + scr.slice(1);
+    const formaMiccle = scr => scr.charAt(0).toUpperCase() + scr.slice(1);
     let it = 0;
 
     function deed() {
@@ -125,24 +140,27 @@ function claensian(run) {
             it++;
 
             if (!deed() || deed().cyn !== "L.TRENDEL") {
-                throw new Error(`Aefter ${display} sceal beon '['`);
+                wyrceanForraeden(`Aefter ${display} sceal beon '['`);
+                break;
             }
             it++;
 
             if (!deed() || deed().cyn !== "SCRIPTURE" && deed().cyn !== "RIM") {
-                throw new Error(`On ${display} sceal beon riht cyn.`);
+                wyrceanForraeden(`On ${display} sceal beon riht cyn.`);
+                break;
             }
 
             const sceatt = deed().sceatt;
             it++;
 
             if (!deed() || deed().cyn !== "R.TRENDEL") {
-                throw new Error(`Aefter tham gewrite sceal beon ']'`)
+                wyrceanForraeden(`Aefter tham gewrit sceal beon ']'`);
+                break;
             }
             it++;
 
             const ast = {
-                cyn: `${capitalize(display)}.W`,
+                cyn: `${formaMiccle(display)}.W`,
                 sceatt: sceatt
             };
             wyrd.push(ast)
@@ -152,30 +170,34 @@ function claensian(run) {
             it++;
 
             if (!deed() || deed().cyn !== "L.TRENDEL") {
-                throw new Error(`Aefter ${file} sceal beon '['`);
+                wyrceanForraeden(`Aefter ${file} sceal beon '['`);
+                break;
             }
             it++;
 
             if (!deed() || deed().cyn !== "SCRIPTURE" && deed().cyn !== "RIM") {
-                throw new Error(`On ${file} sceal beon riht cyn.`);
+                wyrceanForraeden(`On ${file} sceal beon riht cyn.`);
+                break;
             }
 
             const sceatt = deed().sceatt;
             it++;
 
             if (!deed() || deed().cyn !== "R.TRENDEL") {
-                throw new Error(`Aefter tham gewrite sceal beon ']'`)
+                wyrceanForraeden(`Aefter tham gewrit sceal beon ']'`);
+                break;
             }
             it++;
 
             const ast = {
-                cyn: `${capitalize(file)}.W`,
+                cyn: `${formaMiccle(file)}.W`,
                 sceatt: sceatt
             };
             wyrd.push(ast)
             continue;
         }
-        throw new Error("Claensian: Unbekend weorc '" + (deed()?.sceatt || "?") + "'");
+        wyrceanForraeden("Claensian: Unbekend weorc '" + (deed()?.sceatt || "?") + "'");
+        break;
     }
     return wyrd;
 }
@@ -185,18 +207,18 @@ function ongietan(wyrd) {
         const ast = wyrd[i];
 
         if (ast.cyn === "Apert.W") {
-            console.log(ast.sceatt);
+            awritan(ast.sceatt);
             continue;
         }
 
         if (ast.cyn === "Raedan.W") {
             const { nama, maero } = toslitanForme(ast.sceatt);
-            const extra = raedanForme(nama, maero);
-            ongietan(extra)
+            const gewrit = raedanForme(nama, maero);
+            const fAst = sceawungMicel(gewrit)
+            ongietan(fAst)
             continue;
         }
-
-        throw new Error(`Unbekend weorc: ${ast.cyn}`);
+        wyrceanForraeden(`Unbekend weorc: ${ast.cyn}`);
     }
 }
 
