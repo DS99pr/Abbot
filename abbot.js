@@ -1,6 +1,9 @@
 const readline = require('readline');
 const fs = require('fs')
 
+const UrimHord = {};
+const UscriptureHord = {};
+
 function awritan(gewrit) {
     console.log(gewrit);
 }
@@ -102,6 +105,12 @@ function awendan(aerende) {
             continue;
         }
 
+        if (ruun === ",") {
+            run.push({ cyn: "COMMA", sceatt: "," });
+            it++;
+            continue;
+        }
+
 
         if (ruun >= 'a' && ruun <= 'z') {
             let sceatt = "";
@@ -131,10 +140,12 @@ function claensian(run) {
 
     while (it < run.length) {
 
-        if (deed() && deed().cyn === "END") { it++; continue; }    
+        if (deed() && deed().cyn === "END") { it++; continue; }   
+        if (deed() && deed().cyn === "COMMA") { it++; continue; }   
 
         const display = "apert"
         const file = "raedan"
+        const set = "healdan"
 
         if (deed() && deed().cyn === "WEORC" && deed().sceatt == display) {
             it++;
@@ -196,6 +207,68 @@ function claensian(run) {
             wyrd.push(ast)
             continue;
         }
+
+        if (deed() && deed().cyn === "WEORC" && deed().sceatt == set) {
+            it++;
+
+            if (!deed() || deed().cyn !== "L.TRENDEL") {
+                wyrceanForraeden(`Aefter ${set} sceal beon '['`);
+                break;
+            }
+            it++;
+
+            if (!deed() || deed().cyn !== "WEORC" || (deed().sceatt.toUpperCase() 
+                !== "RIM" && deed().sceatt.toUpperCase() !== "SCRIPTURE")) {
+                    wyrceanForraeden(`On ${set} sceal beon riht cyn (SCRIPTURE/RIM)`);
+                    break;
+            }
+
+            const hiw = deed().sceatt;
+            it++;
+
+            if (!deed() || deed().cyn !== "COMMA") {
+                wyrceanForraeden("Hit sceal beon todala");
+                break;
+            }
+            it++
+
+            if (!deed() || deed().cyn !== "WEORC") {
+                wyrceanForraeden('Thu scealt giefan naman hordes');
+                break;
+            };
+            
+            const nama = deed().sceatt;
+            it++;
+
+            if (!deed() || deed().cyn !== "COMMA") {
+                wyrceanForraeden("Hit sceal beon todala");
+                break;
+            }
+            it++
+
+            if (!deed() || (deed().cyn !== "RIM" && deed().cyn !== "SCRIPTURE")) { 
+                wyrceanForraeden(`On ${set} thu scealt giefan sceatt`); 
+                break; 
+            }
+
+            const sceatt = deed().sceatt;
+            it++;
+
+            if (!deed() || deed().cyn !== "R.TRENDEL") {
+                wyrceanForraeden(`Aefter tham gewrit sceal beon ']'`);
+                break;
+            }
+            it++;
+
+            const ast = {
+                cyn: `${formaMiccle(set)}.W`,
+                hiw: hiw,
+                nama: nama,
+                sceatt: sceatt
+            };
+            wyrd.push(ast)
+            continue;
+        }
         wyrceanForraeden("Claensian: Unbekend weorc '" + (deed()?.sceatt || "?") + "'");
         break;
     }
@@ -216,6 +289,21 @@ function ongietan(wyrd) {
             const gewrit = raedanForme(nama, maero);
             const fAst = sceawungMicel(gewrit)
             ongietan(fAst)
+            continue;
+        }
+
+        if (ast.cyn == "Healdan.W") {
+            const hiw = ast.hiw
+            const nama = ast.nama
+            const sceatt = ast.sceatt
+
+            if (hiw == "scripture") {
+                UscriptureHord[nama] = String(sceatt);
+            } else if (hiw == "rim") {
+                UrimHord[nama] = Number(sceatt);
+            } else {
+                wyrceanForraeden(`Thes cyn ne aetstent (${hiw})`);
+            };
             continue;
         }
         wyrceanForraeden(`Unbekend weorc: ${ast.cyn}`);
