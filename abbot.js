@@ -156,13 +156,47 @@ function claensian(run) {
             }
             it++;
 
-            if (!deed() || deed().cyn !== "SCRIPTURE" && deed().cyn !== "RIM") {
+            let sceatt = null;
+
+            if (deed() && (deed().cyn === "SCRIPTURE" || deed().cyn === "RIM")) {
+                sceatt = deed();
+                it++;
+            }
+            else if (deed() && deed().cyn === "WEORC" &&
+                    (deed().sceatt === "rim" || deed().sceatt === "scripture")) {
+
+                const hiw = deed().sceatt;
+                it++;
+
+                if (!deed() || deed().cyn !== "L.TRENDEL") {
+                    wyrceanForraeden(`Aefter ${hiw} sceal beon '['`);
+                    break;
+                }
+                it++;
+
+                if (!deed() || deed().cyn !== "WEORC") {
+                    wyrceanForraeden('Thu scealt giefan naman hordes');
+                    break;
+                 }
+
+                const nama = deed().sceatt;
+                it++;
+
+                if (!deed() || deed().cyn !== "R.TRENDEL") {
+                    wyrceanForraeden(`Aefter ${nama} sceal beon ']'`);
+                    break;
+                }
+                it++;
+            
+                sceatt = {
+                    cyn: "Var.R",
+                    hiw: hiw,
+                    nama: nama
+                };
+            } else {
                 wyrceanForraeden(`On ${display} sceal beon riht cyn.`);
                 break;
             }
-
-            const sceatt = deed().sceatt;
-            it++;
 
             if (!deed() || deed().cyn !== "R.TRENDEL") {
                 wyrceanForraeden(`Aefter tham gewrit sceal beon ']'`);
@@ -173,10 +207,11 @@ function claensian(run) {
             const ast = {
                 cyn: `${formaMiccle(display)}.W`,
                 sceatt: sceatt
-            };
+            };  
             wyrd.push(ast)
             continue;
         }
+
         if (deed() && deed().cyn === "WEORC" && deed().sceatt == file) {
             it++;
 
@@ -187,7 +222,7 @@ function claensian(run) {
             it++;
 
             if (!deed() || deed().cyn !== "SCRIPTURE" && deed().cyn !== "RIM") {
-                wyrceanForraeden(`On ${file} sceal beon riht cyn.`);
+                wyrceanForraeden(`On ${file} sceal beon riht cyn`);
                 break;
             }
 
@@ -277,10 +312,40 @@ function claensian(run) {
 
 function ongietan(wyrd) {
     for (let i = 0; i < wyrd.length; i++) {
+
         const ast = wyrd[i];
 
         if (ast.cyn === "Apert.W") {
-            awritan(ast.sceatt);
+            let sceatt = ast.sceatt;
+
+            if (typeof sceatt === "object" && sceatt.cyn === "Var.R") {
+
+                if (sceatt.hiw === "rim") {
+                    if (!(sceatt.nama in UrimHord)) {
+                        wyrceanForraeden(`Rim '${sceatt.nama}' ne is`);
+                        continue;
+                    }
+                    sceatt = UrimHord[sceatt.nama];
+                }
+
+                else if (sceatt.hiw === "scripture") {
+                    if (!(sceatt.nama in UscriptureHord)) {
+                        wyrceanForraeden(`Scripture '${sceatt.nama}' ne is`);
+                        continue;
+                    }
+                    sceatt = UscriptureHord[sceatt.nama];
+                }
+            }
+
+            else if (typeof sceatt === "object" && sceatt.cyn === "RIM") {
+                sceatt = sceatt.sceatt;
+            }
+
+            else if (typeof sceatt === "object" && sceatt.cyn === "SCRIPTURE") {
+                sceatt = sceatt.sceatt;
+            }
+
+            awritan(sceatt);
             continue;
         }
 
@@ -305,6 +370,15 @@ function ongietan(wyrd) {
                 wyrceanForraeden(`Thes cyn ne aetstent (${hiw})`);
             };
             continue;
+        }
+    
+        if (ast.cyn == "Var.R") {
+            if (ast.hiw == "rim") {
+                return UrimHord[ast.nama];
+            }
+            if (ast.hiw == "scripture") {
+                return UscriptureHord[ast.nama];
+            }
         }
         wyrceanForraeden(`Unbekend weorc: ${ast.cyn}`);
     }
