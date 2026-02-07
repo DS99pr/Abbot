@@ -25,6 +25,8 @@
    bisen: ilidan[rim, x]                     */
 /* bidian[]; - bidian (tidhwil)
    bisen: bidian[5];                         */
+/* awrit[]; - awrit hord (cyn, nama)
+   bisen: awrit[rim, x];                     */
 
 /// CYN
 
