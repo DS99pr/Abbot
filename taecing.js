@@ -23,6 +23,8 @@
    bisen: healdan[rim, x, 250];              */
 /* inlidan[]; - inlidan (cyn, nama)
    bisen: ilidan[rim, x]                     */
+/* bidian[]; - bidian (tidhwil)
+   bisen: bidian[5];                         */
 
 /// CYN
 
