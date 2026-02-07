@@ -20,7 +20,8 @@
 /* raedan[]; - raedan (tacen .abb)
    bisen: raedan["anging.abb"];              */
 /* healdan[]; - healdan (cyn, nama, sceatt)
-   bisen: healdan[rim, x, 250];              */
+   bisen: healdan[rim, x, 250];              
+   tillang: healdan[rim, x, 1 + 1]; / 1 - 1  */
 /* inlidan[]; - inlidan (cyn, nama)
    bisen: ilidan[rim, x]                     */
 /* bidian[]; - bidian (tidhwil)
@@ -32,5 +33,10 @@
 
 // Scripture - String 
 // Rim - Number
+
+/// OP
+
+// x + y - AND
+// x - y - LAES
 
 // Her sceal beon sum thing.
