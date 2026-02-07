@@ -112,6 +112,17 @@ function awendan(aerende) {
             continue;
         }
 
+        if (ruun === "+") {
+            run.push({ cyn: "OP.AND", sceatt: "+" });
+            it++;
+            continue;
+        }
+
+        if (ruun === "-") {
+            run.push({ cyn: "OP.LAES", sceatt: "-" });
+            it++;
+            continue;
+        }
 
         if (ruun >= 'a' && ruun <= 'z') {
             let sceatt = "";
@@ -287,13 +298,34 @@ function claensian(run) {
             }
             it++
 
-            if (!deed() || (deed().cyn !== "RIM" && deed().cyn !== "SCRIPTURE")) { 
-                wyrceanForraeden(`On ${set} thu scealt giefan sceatt`); 
-                break; 
-            }
+            let sceatt = null;
 
-            const sceatt = deed().sceatt;
-            it++;
+            if (deed() && deed().cyn === "SCRIPTURE") { sceatt = deed().sceatt; it++; }
+            else if (deed() && deed().cyn == "RIM") {
+                const wyn = deed().sceatt;
+                it++;
+
+                if (deed() && (deed().cyn === "OP.AND" || deed().cyn == "OP.LAES")) {
+                    const op = deed().cyn;
+                    it++;
+
+                    if (!deed() && deed().cyn == "RIM") {
+                        wyrceanForraeden("Aefter weorce sceal beon rim"); 
+                        break;
+                    }
+                    const riht = deed().sceatt;
+                    it++;
+
+                    sceatt = {
+                        cyn: "RIMCRAEFT",
+                        wyn: wyn,
+                        op: op,
+                        riht: riht
+                    };
+                } else {
+                    sceatt = wyn;
+                }
+            }
 
             if (!deed() || deed().cyn !== "R.TRENDEL") {
                 wyrceanForraeden(`Aefter tham gewrit sceal beon ']'`);
@@ -494,6 +526,19 @@ async function ongietan(wyrd) {
             const hiw = ast.hiw
             const nama = ast.nama
             const sceatt = ast.sceatt
+
+            if (sceatt && sceatt.cyn === "RIMCRAEFT") { 
+                const { wyn, op, riht } = sceatt; 
+                let ende = 0; 
+                if (op === "OP.AND") ende = wyn + riht; 
+                if (op === "OP.LAES") ende = wyn - riht; 
+                if (hiw === "rim") { 
+                    UrimHord[nama] = ende; 
+                } else { 
+                    wyrceanForraeden("Rimcraft maeg beon on rim anum"); 
+                } 
+                continue; 
+            }
 
             if (hiw == "scripture") {
                 UscriptureHord[nama] = String(sceatt);
