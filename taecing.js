@@ -15,28 +15,29 @@
 
 /* apert[]; - apert (scripture odde rim)
    bisen: apert[5]; -> 5              
-   tillang: apert[rim[x]] / apert[scripture[x]] 
-                                             */
+   tillang: apert[rim[x]] / apert[scripture[x]] / apert[treow[x]] 
+                                                               */
 /* raedan[]; - raedan (tacen .abb)
-   bisen: raedan["anging.abb"];              */
+   bisen: raedan["anging.abb"];                                */
 /* healdan[]; - healdan (cyn, nama, sceatt)
    bisen: healdan[rim, x, 250];              
-   tillang: healdan[rim, x, 1 + 1]; / 1 - 1  */
+   tillang: healdan[rim, x, 1 + 1]; / 1 - 1                    */
 /* inlidan[]; - inlidan (cyn, nama)
-   bisen: ilidan[rim, x]                     */
+   bisen: ilidan[rim, x]                                       */
 /* bidian[]; - bidian (tidhwil)
-   bisen: bidian[5];                         */
+   bisen: bidian[5];                                           */
 /* awrit[]; - awrit hord (cyn, nama)
-   bisen: awrit[rim, x];                     */
+   bisen: awrit[rim, x];                                       */
 
 /// CYN
 
 // Scripture - String 
 // Rim - Number
+// Treow - Boolean (aefest/facen)
 
 /// OP
 
-// x + y - AND
-// x - y - LAES
+// x + y - AND 
+// x - y - LAES 
 
 // Her sceal beon sum thing.
