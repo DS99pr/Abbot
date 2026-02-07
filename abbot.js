@@ -88,6 +88,11 @@ function awendan(aerende) {
                 it++;
             }
 
+            if (/[A-Za-z]/.test(aerende[it])) { 
+                wyrceanForraeden("Awendan: Unbekend getael"); 
+                break; 
+            }
+
             run.push({
                 cyn: "RIM",
                 sceatt: Number(rim)
@@ -388,6 +393,8 @@ function claensian(run) {
             continue;
         }
 
+        if (deed() && deed().cyn === "RIM") { it++; continue; }
+        if (deed() && deed().cyn === "SCRIPTURE") { it++; continue; }
         wyrceanForraeden("Claensian: Unbekend weorc '" + (deed()?.sceatt || "?") + "'");
         break;
     }
