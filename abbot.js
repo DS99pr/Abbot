@@ -1,7 +1,7 @@
 const readline = require('readline');
 const fs = require('fs')
 
-const UrimHord = {};
+const UrimHord = {pi: 3.1415};
 const UscriptureHord = {};
 
 function awritan(gewrit) {
@@ -44,6 +44,7 @@ function sceawungMicel(gewrit) {
     const wyrd = claensian(run);
     return wyrd
 }
+
 
 
 function awendan(aerende) {
@@ -128,6 +129,8 @@ function awendan(aerende) {
     return run
 }
 
+
+
 function claensian(run) {
     const formaMiccle = scr => scr.charAt(0).toUpperCase() + scr.slice(1);
     let it = 0;
@@ -147,6 +150,7 @@ function claensian(run) {
         const file = "raedan"
         const set = "healdan"
         const input = "inlidan"
+        const delay = "bidian"
 
         if (deed() && deed().cyn === "WEORC" && deed().sceatt == display) {
             it++;
@@ -353,11 +357,43 @@ function claensian(run) {
             continue;
         }
 
+        if (deed() && deed().cyn === "WEORC" && deed().sceatt == delay) {
+            it++;
+
+            if (!deed() || deed().cyn !== "L.TRENDEL") {
+                wyrceanForraeden(`Aefter ${delay} sceal beon '['`);
+                break;
+            }
+            it++;
+
+            if (!deed() || deed().cyn !== "RIM") {
+                wyrceanForraeden(`Her sceal beon rim`);
+            }
+
+            const sceatt = deed().sceatt;
+            it++;
+
+            if (!deed() || deed().cyn !== "R.TRENDEL") {
+                wyrceanForraeden(`Aefter tham gewrit sceal beon ']'`);
+                break;
+            }
+            it++;
+
+            const ast = {
+                cyn: `${formaMiccle(delay)}.W`,
+                sceatt: sceatt
+            };
+            wyrd.push(ast)
+            continue;
+        }
+
         wyrceanForraeden("Claensian: Unbekend weorc '" + (deed()?.sceatt || "?") + "'");
         break;
     }
     return wyrd;
 }
+
+
 
 async function ongietan(wyrd) {
     for (let i = 0; i < wyrd.length; i++) {
@@ -443,6 +479,13 @@ async function ongietan(wyrd) {
             continue;
         }
 
+        if (ast.cyn == "Bidian.W") {
+            const tid = Number(ast.sceatt);
+
+            await new Promise(r => setTimeout(r, tid * 1000));
+            continue;
+        }
+
     
         if (ast.cyn == "Var.R") {
             if (ast.hiw == "rim") {
@@ -456,6 +499,8 @@ async function ongietan(wyrd) {
     }
 }
 
+
+
 async function doon() {
     rl.question(">> ", async (agen) => {
         let run = awendan(agen)
@@ -464,5 +509,7 @@ async function doon() {
         doon();
     })
 }
+
+
 
 doon()
