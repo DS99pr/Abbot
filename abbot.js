@@ -51,6 +51,14 @@ function awendan(aerende) {
     const run = [];
     let it = 0;
 
+    function scortre(r, char, cyn) {
+        if (r === char) {
+            run.push({ cyn: cyn, sceatt: char });
+            it++;
+            return true
+        }
+    }
+
     while (it < aerende.length) {
         const ruun = aerende[it]
         if (/\s/.test(ruun)) {
@@ -88,41 +96,12 @@ function awendan(aerende) {
             continue;
         }
 
-        if (ruun === "[") {
-            run.push({ cyn: "L.TRENDEL", sceatt: "[" });
-            it++;
-            continue;
-        }
-
-        if (ruun === "]") {
-            run.push({ cyn: "R.TRENDEL", sceatt: "]" });
-            it++;
-            continue;
-        }
-
-        if (ruun === ";") {
-            run.push({ cyn: "END", sceatt: ";" });
-            it++;
-            continue;
-        }
-
-        if (ruun === ",") {
-            run.push({ cyn: "COMMA", sceatt: "," });
-            it++;
-            continue;
-        }
-
-        if (ruun === "+") {
-            run.push({ cyn: "OP.AND", sceatt: "+" });
-            it++;
-            continue;
-        }
-
-        if (ruun === "-") {
-            run.push({ cyn: "OP.LAES", sceatt: "-" });
-            it++;
-            continue;
-        }
+        if (scortre(ruun, "[", "L.TRENDEL")) continue;
+        if (scortre(ruun, "]", "R.TRENDEL")) continue;
+        if (scortre(ruun, ";", "END")) continue;
+        if (scortre(ruun, ",", "COMMA")) continue;
+        if (scortre(ruun, "+", "OP.AND")) continue;
+        if (scortre(ruun, "-", "OP.LAES")) continue;
 
         if (ruun >= 'a' && ruun <= 'z') {
             let sceatt = "";
@@ -150,6 +129,19 @@ function claensian(run) {
         return run[it] || null;
     }
 
+    
+
+    function sceawHit(cyn, error) {
+        if (!deed() || deed().cyn !== cyn) {
+            wyrceanForraeden(error);
+            return false
+        }
+        it++;
+        return true
+    }  
+
+
+
     const wyrd = [];
 
     while (it < run.length) {
@@ -167,11 +159,7 @@ function claensian(run) {
         if (deed() && deed().cyn === "WEORC" && deed().sceatt == display) {
             it++;
 
-            if (!deed() || deed().cyn !== "L.TRENDEL") {
-                wyrceanForraeden(`Aefter ${display} sceal beon '['`);
-                break;
-            }
-            it++;
+            if (!sceawHit("L.TRENDEL", `Aefter ${display} sceal beon '['`)) break;
 
             let sceatt = null;
 
@@ -185,41 +173,30 @@ function claensian(run) {
                 const hiw = deed().sceatt;
                 it++;
 
-                if (!deed() || deed().cyn !== "L.TRENDEL") {
-                    wyrceanForraeden(`Aefter ${hiw} sceal beon '['`);
-                    break;
-                }
-                it++;
+                if (!sceawHit("L.TRENDEL", `Aefter ${hiw} sceal beon '['`)) break;
 
                 if (!deed() || deed().cyn !== "WEORC") {
                     wyrceanForraeden('Thu scealt giefan naman hordes');
                     break;
-                 }
+                }
 
                 const nama = deed().sceatt;
                 it++;
 
-                if (!deed() || deed().cyn !== "R.TRENDEL") {
-                    wyrceanForraeden(`Aefter ${nama} sceal beon ']'`);
-                    break;
-                }
-                it++;
+                if (!sceawHit("R.TRENDEL", `Aefter ${nama} sceal beon ']'`)) break;
             
                 sceatt = {
                     cyn: "Var.R",
                     hiw: hiw,
                     nama: nama
                 };
+
             } else {
                 wyrceanForraeden(`On ${display} sceal beon riht cyn.`);
                 break;
             }
 
-            if (!deed() || deed().cyn !== "R.TRENDEL") {
-                wyrceanForraeden(`Aefter tham gewrit sceal beon ']'`);
-                break;
-            }
-            it++;
+            if (!sceawHit("R.TRENDEL", "Aefter tham gewrit sceal beon ']'")) break;
 
             const ast = {
                 cyn: `${formaMiccle(display)}.W`,
@@ -232,11 +209,7 @@ function claensian(run) {
         if (deed() && deed().cyn === "WEORC" && deed().sceatt == file) {
             it++;
 
-            if (!deed() || deed().cyn !== "L.TRENDEL") {
-                wyrceanForraeden(`Aefter ${file} sceal beon '['`);
-                break;
-            }
-            it++;
+            if (!sceawHit("L.TRENDEL", `Aefter ${file} sceal beon '['`)) break;
 
             if (!deed() || deed().cyn !== "SCRIPTURE" && deed().cyn !== "RIM") {
                 wyrceanForraeden(`On ${file} sceal beon riht cyn`);
@@ -246,11 +219,7 @@ function claensian(run) {
             const sceatt = deed().sceatt;
             it++;
 
-            if (!deed() || deed().cyn !== "R.TRENDEL") {
-                wyrceanForraeden(`Aefter tham gewrit sceal beon ']'`);
-                break;
-            }
-            it++;
+            if (!sceawHit("R.TRENDEL", "Aefter tham gewrit sceal beon ']'")) break;
 
             const ast = {
                 cyn: `${formaMiccle(file)}.W`,
@@ -263,11 +232,7 @@ function claensian(run) {
         if (deed() && deed().cyn === "WEORC" && deed().sceatt == set) {
             it++;
 
-            if (!deed() || deed().cyn !== "L.TRENDEL") {
-                wyrceanForraeden(`Aefter ${set} sceal beon '['`);
-                break;
-            }
-            it++;
+            if (!sceawHit("L.TRENDEL", `Aefter ${set} sceal beon '['`)) break;
 
             if (!deed() || deed().cyn !== "WEORC" || (deed().sceatt.toUpperCase() 
                 !== "RIM" && deed().sceatt.toUpperCase() !== "SCRIPTURE")) {
@@ -278,11 +243,7 @@ function claensian(run) {
             const hiw = deed().sceatt;
             it++;
 
-            if (!deed() || deed().cyn !== "COMMA") {
-                wyrceanForraeden("Hit sceal beon todala");
-                break;
-            }
-            it++
+            if (!sceawHit("COMMA", "Hit sceal beon todala")) break;
 
             if (!deed() || deed().cyn !== "WEORC") {
                 wyrceanForraeden('Thu scealt giefan naman hordes');
@@ -292,11 +253,7 @@ function claensian(run) {
             const nama = deed().sceatt;
             it++;
 
-            if (!deed() || deed().cyn !== "COMMA") {
-                wyrceanForraeden("Hit sceal beon todala");
-                break;
-            }
-            it++
+            if (!sceawHit("COMMA", "Hit sceal beon todala")) break;
 
             let sceatt = null;
 
@@ -327,11 +284,7 @@ function claensian(run) {
                 }
             }
 
-            if (!deed() || deed().cyn !== "R.TRENDEL") {
-                wyrceanForraeden(`Aefter tham gewrit sceal beon ']'`);
-                break;
-            }
-            it++;
+            if (!sceawHit("R.TRENDEL", "Aefter tham gewrit sceal beon ']'")) break;
 
             const ast = {
                 cyn: `${formaMiccle(set)}.W`,
@@ -346,11 +299,7 @@ function claensian(run) {
         if (deed() && deed().cyn === "WEORC" && deed().sceatt == input) {
             it++;
 
-            if (!deed() || deed().cyn !== "L.TRENDEL") {
-                wyrceanForraeden(`Aefter ${input} sceal beon '['`);
-                break;
-            }
-            it++;
+            if (!sceawHit("L.TRENDEL", `Aefter ${input} sceal beon '['`)) break;
 
             if (!deed() || deed().cyn !== "WEORC" || 
                 (deed().sceatt !== "rim" && deed().sceatt !== "scripture")) { 
@@ -361,11 +310,7 @@ function claensian(run) {
             const hiw = deed().sceatt;
             it++;
 
-            if (!deed() || deed().cyn !== "COMMA") {
-                wyrceanForraeden("Hit sceal beon todala");
-                break;
-            }
-            it++
+            if (!sceawHit("COMMA", "Hit sceal beon todala")) break;
 
             if (!deed() || deed().cyn !== "WEORC") {
                 wyrceanForraeden('Thu scealt giefan naman hordes');
@@ -375,11 +320,7 @@ function claensian(run) {
             const nama = deed().sceatt;
             it++;
 
-            if (!deed() || deed().cyn !== "R.TRENDEL") {
-                wyrceanForraeden(`Aefter tham gewrit sceal beon ']'`);
-                break;
-            }
-            it++;
+            if (!sceawHit("R.TRENDEL", "Aefter tham gewrit sceal beon ']'")) break;
 
             const ast = {
                 cyn: `${formaMiccle(input)}.W`,
@@ -393,11 +334,7 @@ function claensian(run) {
         if (deed() && deed().cyn === "WEORC" && deed().sceatt == delay) {
             it++;
 
-            if (!deed() || deed().cyn !== "L.TRENDEL") {
-                wyrceanForraeden(`Aefter ${delay} sceal beon '['`);
-                break;
-            }
-            it++;
+            if (!sceawHit("L.TRENDEL", `Aefter ${delay} sceal beon '['`)) break;
 
             if (!deed() || deed().cyn !== "RIM") {
                 wyrceanForraeden(`Her sceal beon rim`);
@@ -406,11 +343,7 @@ function claensian(run) {
             const sceatt = deed().sceatt;
             it++;
 
-            if (!deed() || deed().cyn !== "R.TRENDEL") {
-                wyrceanForraeden(`Aefter ${vars} sceal beon ']'`);
-                break;
-            }
-            it++;
+            if (!sceawHit("R.TRENDEL", "Aefter rim sceal beon ']'")) break;
 
             const ast = {
                 cyn: `${formaMiccle(delay)}.W`,
@@ -423,11 +356,7 @@ function claensian(run) {
         if (deed() && deed().cyn === "WEORC" && deed().sceatt == vars) {
             it++;
 
-            if (!deed() || deed().cyn !== "L.TRENDEL") {
-                wyrceanForraeden(`Aefter ${vars} sceal beon '['`);
-                break;
-            }
-            it++;
+            if (!sceawHit("L.TRENDEL", `Aefter ${vars} sceal beon '['`)) break;
 
             if (!deed() || deed().cyn !== "WEORC" || 
                 (deed().sceatt !== "rim" && deed().sceatt !== "scripture")) { 
@@ -438,11 +367,7 @@ function claensian(run) {
             const hiw = deed().sceatt;
             it++
 
-            if (!deed() || deed().cyn !== "COMMA") {
-                wyrceanForraeden("Hit sceal beon todala");
-                break;
-            }
-            it++
+            if (!sceawHit("COMMA", "Hit sceal beon todala")) break;
 
             if (!deed() || deed().cyn !== "WEORC") {
                 wyrceanForraeden('Thu scealt giefan naman hordes');
@@ -452,11 +377,7 @@ function claensian(run) {
             const nama = deed().sceatt;
             it++
 
-            if (!deed() || deed().cyn !== "R.TRENDEL") {
-                wyrceanForraeden(`Aefter ${vars} sceal beon ']'`);
-                break;
-            }
-            it++;
+            if (!sceawHit("R.TRENDEL", "Aefter nama sceal beon '['")) break;
 
             const ast = {
                 cyn: `${formaMiccle(vars)}.W`,
