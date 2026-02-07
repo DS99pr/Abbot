@@ -151,6 +151,7 @@ function claensian(run) {
         const set = "healdan"
         const input = "inlidan"
         const delay = "bidian"
+        const vars = "awrit"
 
         if (deed() && deed().cyn === "WEORC" && deed().sceatt == display) {
             it++;
@@ -374,7 +375,7 @@ function claensian(run) {
             it++;
 
             if (!deed() || deed().cyn !== "R.TRENDEL") {
-                wyrceanForraeden(`Aefter tham gewrit sceal beon ']'`);
+                wyrceanForraeden(`Aefter ${vars} sceal beon ']'`);
                 break;
             }
             it++;
@@ -382,6 +383,53 @@ function claensian(run) {
             const ast = {
                 cyn: `${formaMiccle(delay)}.W`,
                 sceatt: sceatt
+            };
+            wyrd.push(ast)
+            continue;
+        }
+
+        if (deed() && deed().cyn === "WEORC" && deed().sceatt == vars) {
+            it++;
+
+            if (!deed() || deed().cyn !== "L.TRENDEL") {
+                wyrceanForraeden(`Aefter ${vars} sceal beon '['`);
+                break;
+            }
+            it++;
+
+            if (!deed() || deed().cyn !== "WEORC" || 
+                (deed().sceatt !== "rim" && deed().sceatt !== "scripture")) { 
+                    wyrceanForraeden(`On niman sceal beon cyn (rim/scripture)`); 
+                    break; 
+            }
+
+            const hiw = deed().sceatt;
+            it++
+
+            if (!deed() || deed().cyn !== "COMMA") {
+                wyrceanForraeden("Hit sceal beon todala");
+                break;
+            }
+            it++
+
+            if (!deed() || deed().cyn !== "WEORC") {
+                wyrceanForraeden('Thu scealt giefan naman hordes');
+                break;
+            };
+
+            const nama = deed().sceatt;
+            it++
+
+            if (!deed() || deed().cyn !== "R.TRENDEL") {
+                wyrceanForraeden(`Aefter ${vars} sceal beon ']'`);
+                break;
+            }
+            it++;
+
+            const ast = {
+                cyn: `${formaMiccle(vars)}.W`,
+                hiw: hiw,
+                nama: nama
             };
             wyrd.push(ast)
             continue;
@@ -486,6 +534,19 @@ async function ongietan(wyrd) {
             continue;
         }
 
+        if (ast.cyn == "Awrit.W") {
+            const hiw = ast.hiw
+            const nama = ast.nama;
+
+            if (hiw.toUpperCase() === "SCRIPTURE") {
+                UscriptureHord[nama] = Object.entries(UscriptureHord).map(([k, v]) => `${k}: ${v}`).join(', ')
+            } else if (hiw.toUpperCase() === "RIM") {
+                UscriptureHord[nama] = Object.entries(UrimHord).map(([k, v]) => `${k}: ${v}`).join(', ')
+            } else {
+                wyrceanForraeden(`Thes cyn ne aetstent (${hiw})`);
+            }
+            continue;
+        }
     
         if (ast.cyn == "Var.R") {
             if (ast.hiw == "rim") {
