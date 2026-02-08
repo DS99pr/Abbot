@@ -1,3 +1,7 @@
+// 
+// TEN JEZYK BEDZIE PRZEPISANY JAK COS
+//
+
 const readline = require('readline');
 const fs = require('fs')
 
